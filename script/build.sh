@@ -93,7 +93,7 @@ elif [ $1_x == rootfs_x ];then
 elif [ $1_x == img_x ];then
     echo $PWD
     if [ $2_x == _x -o $3_x == _x ];then
-            source $SRCPATH/imgscr.sh 10 10
+            source $SRCPATH/imgscr.sh 6 3
     else
             source $SRCPATH/imgscr.sh $2 $3
     fi
