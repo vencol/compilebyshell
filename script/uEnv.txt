@@ -1,0 +1,72 @@
+#redefin here to select board
+splstart=10
+splsize=40
+bootstart=50
+bootsize=3E8
+envname=uEnv.txt
+splname=sunxi-spl.bin
+bootname=u-boot-dtb.bin
+imagename=zImage
+dtbname=sun8i-h3-orangepi-one.dtb
+bootimg=bootz $kernel_addr_r - $fdt_addr_r
+pcip=192.168.0.111
+#redefin here to select board auto config by ./build.sh env
+
+devname=mmc
+devnum=0
+bootpart=1
+saveenvname=uboot.env
+#tftp boot param
+boardip=192.168.137.2
+boardgw=192.168.137.1
+boardmask=255.255.255.0
+nfspath=/home/vencol/code/nfs
+
+#mmc boot param
+mmcbootarg=setenv bootargs console=ttyS0,115200 earlyprintk root=/dev/mmcblk0p2 rootwait rw 
+mmcbootenv=fatload ${devname} ${devnum}:${bootpart} $kernel_addr_r ${imagename}; fatload ${devname} ${devnum}:${bootpart} $fdt_addr_r ${dtbname};
+
+#tftp and nfs
+tftpenv=usb start; setenv ethact usb_ether; setenv ipaddr ${boardip}; setenv gatewayip ${boardgw}; setenv netmask ${boardmask}; setenv serverip ${pcip};
+nfsbootarg=setenv bootargs root=/dev/nfs rw rootpath=${nfspath} nfsroot=${pcip}:${nfspath},nolock ip=${boardip}:${pcip}:${boardgw}:${boardmask} console=ttyS0,115200 nfsvers=2
+tftpgetimage=tftp $kernel_addr_r ${imagename}; tftp $fdt_addr_r ${dtbname};
+
+#set uart update env ymoden
+byuartupspl=loady $kernel_addr_r; ${devname} write $kernel_addr_r ${splstart} ${splsize};
+byuartupuboot=loady $kernel_addr_r; ${devname} write $kernel_addr_r ${bootstart} ${bootsize};
+byuartupenv=loady $kernel_addr_r; fatwrite ${devname} ${devnum}:${bootpart} $kernel_addr_r ${envname} ${filesize};
+byuartupdtb=loady $kernel_addr_r; fatwrite ${devname} ${devnum}:${bootpart} $kernel_addr_r ${dtbname} ${filesize};
+byuartupimg=loady $kernel_addr_r; fatwrite ${devname} ${devnum}:${bootpart} $kernel_addr_r ${imagename} ${filesize};
+
+#set tftp update env
+bytftpupspl=tftp $kernel_addr_r ${splname}; ${devname} write $kernel_addr_r ${splstart} ${splsize};
+bytftpupuboot=tftp $kernel_addr_r ${bootname};${devname} write $kernel_addr_r ${bootstart} ${bootsize};
+bytftpupspluboot=tftp $kernel_addr_r u-boot-sunxi-with-spl.bin;${devname} write $kernel_addr_r 10 ${bootsize};
+bytftpupenv=tftp $kernel_addr_r ${envname};fatwrite ${devname} ${devnum}:${bootpart} $kernel_addr_r ${envname} ${filesize};
+bytftpupdtb=tftp $kernel_addr_r ${dtbname};fatwrite ${devname} ${devnum}:${bootpart} $kernel_addr_r ${dtbname} ${filesize};
+bytftpupimg=tftp $kernel_addr_r ${imagename};fatwrite ${devname} ${devnum}:${bootpart} $kernel_addr_r ${imagename} ${filesize};
+#updatebytftp=run updatespl; run updateenv; run updatedtb; run updateimg; run updateuboot;
+
+#set define env
+debugprint=echo "saveip ${serverip} setip ${pcip}";
+rmenv=env default -a; fatrm ${devname} ${devnum}:${bootpart} ${saveenvname};
+updateenv=run bytftpupenv; env import -t $kernel_addr_r ${filesize}; 
+resaveenv=run updateenv; saveenv;
+savedefenv=run tftpenv; run mmcbootarg; saveenv;
+#saveenvfirst=if test "${serverip}_IP" = "${pcip}_IP"; then run debugprint; else run savedefenv; fi;
+
+#boot selection
+bootzimage=bootz $kernel_addr_r - $fdt_addr_r;
+bootimage=booti $kernel_addr_r - $fdt_addr_r;
+boottommc=run mmcbootenv; run mmcbootarg; run bootimg;
+tftpboottommc=run tftpenv; run tftpgetimage; run mmcbootarg;  run bootimg;
+tftpboottonfs=run tftpenv; run tftpgetimage; run nfsbootarg;  run bootimg;
+
+#select boot
+uenvboot=run tftpboottonfs;
+#uenvboot=run boottommc;
+#uenvboot=run tftpboottommc;
+
+uenvcmd=run uenvboot;
+
+#must have the last line

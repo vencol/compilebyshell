@@ -1,0 +1,6 @@
+bootbuild/*
+linuxbuild/*
+bboxbuild/*
+atfbuild/*
+rootfs/*
+images/*

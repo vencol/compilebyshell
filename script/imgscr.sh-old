@@ -1,0 +1,154 @@
+#! /bin/bash
+CONFIG_BOARD=$MYBOARD
+echo "making $CONFIG_BOARD sdimg fat:${1}M rootfs:${2}M"
+BOOTPARTSIZE=$1
+FSPARTSIZE=$2
+mkdir -p images
+cd images
+mkdir -p bootdir
+mkdir -p linuxdir
+echo $PWD
+SDIMG="sd.img"
+if [ $BOOTPARTSIZE -lt 6 ];then
+        echo "boot part size must larget than 6M"
+        exit 1
+fi
+if [ $FSPARTSIZE -lt 2 ];then
+        echo "rootfs part size must larget than 2M"
+        exit 1
+fi
+
+#boot partion
+dd if=/dev/zero of=${SDIMG}1 bs=1M count=$BOOTPARTSIZE > /dev/null 2>&1
+echo "Formating fat partition for boot..."
+sudo mkfs -t vfat -F 32 -n BOOT ${SDIMG}1 > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+        echo "ERROR formating fat boot partition."
+        exit 0
+fi
+vfatuuid=`sudo blkid -s UUID -o value ${SDIMG}1`
+echo "  fat boot partition formated."
+if ! sudo mount ${SDIMG}1 bootdir; then
+        echo "ERROR mounting fat boot partitions..."
+        exit 1
+fi
+sudo cp -rf $IMGPATH $NPWD/images/bootdir/
+sudo cp -rf $DTBPATH $NPWD/images/bootdir/
+sudo cp -rf $ENVPATH $NPWD/images/bootdir/
+sync
+if ! sudo umount bootdir; then
+        echo "ERROR unmounting fat boot partition."
+fi
+
+#rootfs partion
+dd if=/dev/zero of=${SDIMG}2 bs=1M count=$FSPARTSIZE > /dev/null 2>&1
+echo "Formating rootfs linux partition ..."
+sudo mkfs -t ext4 -F -L ROOTFS ${SDIMG}2 > /dev/null 2>&1
+# sudo mkfs.ext4 -O ^metadata_csum -F -b 4096 -E stride=2,stripe-width=1024 -L rootfs ${SDIMG}2 #> /dev/null 2>&1
+if [ $? -ne 0 ]; then
+        echo "ERROR formating rootfs linux partition."
+        exit 0
+fi
+vfatuuid=`sudo blkid -s UUID -o value ${SDIMG}2`
+echo "  rootfs linux partition formated."
+if ! sudo mount -t ext4 ${SDIMG}2 linuxdir; then
+        echo "ERROR mounting rootfs linux partitions..."
+        exit 1
+fi
+sudo rsync -r -t -p -o -g -x --delete -l -H -D --numeric-ids -s --stats $NPWD/rootfs/ linuxdir > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+        echo "ERROR copying rootfs linux partition, maybe not enough size for rootfs"
+        sudo umount linuxdir
+        exit 0
+fi
+sync
+if ! sudo umount linuxdir; then
+        echo "ERROR unmounting rootfs linux partitions."
+fi
+
+
+
+#create img to burn
+#TABLESIZE M
+if [ "${CONFIG_BOARD}_x" == "bbb_x" ];then
+        TABLESIZE=2
+else
+        TABLESIZE=1
+fi
+FATSTART=$[ ${TABLESIZE} * 1024 * 1024 / 512 ]
+EXTSTART=$[ (${TABLESIZE} + ${BOOTPARTSIZE})  * 1024 * 1024 / 512 + 1 ]
+TOTALSIZE=$[ ${BOOTPARTSIZE} + ${FSPARTSIZE} + 10]
+#EXTSTART=$(expr ${BOOTPARTSIZE}  * 1024 * 1024 / 512)
+#TOTALSIZE=$(expr ${BOOTPARTSIZE} + ${FSPARTSIZE} + 10)
+dd if=/dev/zero of=${SDIMG} bs=1M count=$TOTALSIZE > /dev/null 2>&1
+
+
+#cp SPL and bootloade to sd
+echo "create partition table"
+#CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR
+dd if=$SPLPATH of=${SDIMG} conv=notrunc seek=1 bs=${SPLOFFSET}k > /dev/null 2>&1
+dd if=$BOOTPATH of=${SDIMG} conv=notrunc seek=1 bs=${BOOTOFFSET}k > /dev/null 2>&1
+#dd if=$NPWD/bootbuild/u-boot-sunxi-with-spl.bin of=${SDIMG} seek=1 conv=notrunc bs=8k > /dev/null 2>&1
+
+
+#create img partition table
+echo "tablesize : $TABLESIZE fat : $FATSTART ext4 : $EXTSTART total : $TOTALSIZE"
+# cat << FDISK_EOF | sudo fdisk ${SDIMG} #> /dev/null 2>&1
+# n
+# p
+# 1
+# ${FATSTART}
+# +${BOOTPARTSIZE}M
+# n
+# p
+# 2
+# ${EXTSTART}
+# +${FSPARTSIZE}M
+# t
+# 1
+# c
+# a
+# 1
+# w
+# FDISK_EOF
+echo -e "n\np\n1\n${FATSTART}\n+${BOOTPARTSIZE}M\nn\np\n2\n${EXTSTART}\n+${FSPARTSIZE}M\nt\n1\nc\na\n1\nw\n" | sudo fdisk ${SDIMG} > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+        echo "make img partition table error for size"
+        exit 1
+fi
+sync
+sleep 2
+partprobe -s ${SDIMG}  > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+        echo "make img partition table error"
+        exit 1
+fi
+dd if=${SDIMG} of=${SDIMG}t bs=1M count=$TABLESIZE > /dev/null 2>&1
+rm -rf ${SDIMG}
+echo "  create partition table success"
+
+#merge imgt and img1 and img2 to img
+echo "mergeing image "
+if [ ! -f ${SDIMG}t ]; then
+        echo "error there is not ${SDIMG}t"
+        exit 1
+fi
+if [ ! -f ${SDIMG}1 ]; then
+        echo "error there is not ${SDIMG}1"
+        exit 1
+fi
+if [ ! -f ${SDIMG}2 ]; then
+        echo "error there is not ${SDIMG}2"
+        exit 1
+fi
+dd if=${SDIMG}t of=${SDIMG} bs=1M count=$TABLESIZE  > /dev/null 2>&1
+dd if=${SDIMG}1 of=${SDIMG} bs=1M conv=notrunc oflag=append seek=$TABLESIZE > /dev/null 2>&1
+dd if=${SDIMG}2 of=${SDIMG} bs=1M conv=notrunc oflag=append seek=$((TABLESIZE + BOOTPARTSIZE)) > /dev/null 2>&1
+sync
+sleep 2
+partprobe -s ${SDIMG}
+if [ $? -ne 0 ]; then
+        echo "make img partition table error"
+        exit 1
+fi
+echo "create successful"
