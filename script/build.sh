@@ -6,6 +6,10 @@ CODETOP=`realpath ../../`
 SRCPATH=$NPWD/script
 BOARDSH_NAME=orangepi_one_board
 
+# git clone https://gitee.com/mirrors/u-boot.git
+# git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
+# git clone https://gitee.com/mirrors/busyboxsource.git
+
 . $SRCPATH/board/$BOARDSH_NAME.sh
 if [ $? != 0 ]; then
     echo "set board param fail, pls set you board config"
@@ -50,7 +54,8 @@ elif [ $1_x == uboot_x ];then
     	cp $BOOTPATH $TFTPSERVERPATH
 	fi
 elif [ $1_x == linux_x ];then
-    cd $CODETOP/src/linux-5.7.7
+    cd $CODETOP/src/linux
+    mkdir -p $NPWD/linuxbuild
     echo $PWD
 	if [ "$2" == "baseconfig" ]; then
         cp $SRCPATH/board/$MYBOARD/linux-config $NPWD/linuxbuild/.config
@@ -63,7 +68,6 @@ elif [ $1_x == linux_x ];then
         DTBNAME=`basename ${DTBPATH}`
     	make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE INSTALL_MOD_PATH=$NPWD/rootfs O=$NPWD/linuxbuild $DTBNAME
     else
-        mkdir -p $NPWD/linuxbuild
         make -j8 ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE O=$NPWD/linuxbuild $2
         cp $IMGPATH $TFTPSERVERPATH
         cp $DTBPATH $TFTPSERVERPATH

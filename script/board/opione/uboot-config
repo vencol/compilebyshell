@@ -384,7 +384,7 @@ CONFIG_BOOTDELAY=2
 # CONFIG_AUTOBOOT_USE_MENUKEY is not set
 # CONFIG_USE_BOOTARGS is not set
 CONFIG_USE_BOOTCOMMAND=y
-CONFIG_BOOTCOMMAND="fatload mmc 0 $kernel_addr_r uEnv.txt; env import -t $kernel_addr_r $filesize; run uenvboot; run distro_bootcmd;"
+CONFIG_BOOTCOMMAND="fatload mmc 0 $kernel_addr_r uEnv.txt; env import -t $kernel_addr_r $filesize; run uenvboot;"
 CONFIG_USE_PREBOOT=y
 CONFIG_PREBOOT=""
 CONFIG_DEFAULT_FDT_FILE=""
@@ -1541,7 +1541,7 @@ CONFIG_WATCHDOG_TIMEOUT_MSECS=60000
 # CONFIG_FS_CBFS is not set
 # CONFIG_SPL_FS_CBFS is not set
 CONFIG_FS_EXT4=y
-# CONFIG_EXT4_WRITE is not set
+CONFIG_EXT4_WRITE=y
 CONFIG_FS_FAT=y
 CONFIG_FAT_WRITE=y
 CONFIG_FS_FAT_MAX_CLUSTSIZE=65536

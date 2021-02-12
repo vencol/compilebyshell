@@ -65,9 +65,6 @@ nameseverr 233.6.6.6
 nameseverr 10.8.16.30
 DNSEOF
 
-cat << HOSTEOF > etc/hostname
-vencolfs
-HOSTEOF
 
 #cp -a $NPWD/../gcc/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/lib/ lib
 #rm -f lib/*.a
@@ -87,13 +84,15 @@ GEOF
 #root:$6$B7gzTyFF$Zm2fC5EQYdqupH.BwccJv0YX4XingPOqsMcu1vlWC4AaKof4ycDGlXooMs2m5ZxfDPvjhDicnkt/PuGBDqZtD1:18316:0:99999:7:::
 #SHEOF
 
+# cat << HOSTEOF > etc/hostname
+# vencolfs
+# HOSTEOF
 cat << PROEOF > etc/profile
 USER="`id -un`"
 LOGNAME=$USER #登录之后使用用户名显示
-HOSTNAME="rootfs_by_vencol"     #主机名
-#HOSTNAME='/bin/hostname'
+HOSTNAME="vencolfs"     #主机名
 PS1="[\u@\h \w]# "      #终端显示信息
-alais ll="ls -al"
+alias ll="ls -al"
 
 if [ ! -z ${SSH_TTY} ]; then
    export PATH=/sbin:/usr/sbin:/bin:/usr/bin
