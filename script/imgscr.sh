@@ -13,7 +13,7 @@ if [ $BOOTPARTSIZE -lt 6 ];then
         echo "boot part size must larget than 6M"
         exit 1
 fi
-if [ $FSPARTSIZE -lt 2 ];then
+if [ $FSPARTSIZE -lt 3 ];then
         echo "rootfs part size must larget than 2M"
         exit 1
 fi
@@ -62,7 +62,7 @@ partprobe -s ${SDIMG}  > /dev/null 2>&1
 sudo kpartx -av ${SDIMG}
 BOOTPART=` ls /dev/mapper | grep "p1$" `
 ROOTPART=` ls /dev/mapper | grep "p2$" `
-if [ "$BOOTPART" == "" || "$ROOTPART" == "" ]; then
+if [ "$BOOTPART" == "" -o "$ROOTPART" == "" ]; then
         echo "ERROR mounting partitions..."
         sudo kpartx -dv ${SDIMG}
         exit 1
@@ -91,6 +91,8 @@ if ! sudo mount -t ext4 /dev/mapper/$ROOTPART linuxdir; then
         echo "ERROR mounting rootfs linux partitions..."
         exit 1
 fi
+mkdir -p $NPWD/tmp
+cp -r $NPWD/rootfs/root/*  $NPWD/tmp
 sudo rsync -r -t -p -o -g -x --delete -l -H -D --numeric-ids -s --stats $NPWD/rootfs/ linuxdir > /dev/null 2>&1
 if [ $? -ne 0 ]; then
         echo "ERROR copying rootfs linux partition, maybe not enough size for rootfs"
@@ -103,9 +105,11 @@ if ! sudo umount linuxdir; then
         echo "ERROR unmounting rootfs linux partitions."
 fi
 sudo kpartx -dv ${SDIMG}
-
+mv $NPWD/tmp/* $NPWD/rootfs/root/ 
+rm -rf $NPWD/tmp
 
 cat << FDISK_EOF | sudo fdisk ${SDIMG} #> /dev/null 2>&1
 p
 q
 FDISK_EOF
+echo "create sd.img success in $NPWD/images"
