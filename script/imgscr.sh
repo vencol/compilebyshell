@@ -9,11 +9,11 @@ mkdir -p bootdir
 mkdir -p linuxdir
 echo $PWD
 SDIMG="sd.img"
-if [ $BOOTPARTSIZE -lt 6 ];then
-        echo "boot part size must larget than 6M"
+if [ $BOOTPARTSIZE -lt 5 ];then
+        echo "boot part size must larget than 5M"
         exit 1
 fi
-if [ $FSPARTSIZE -lt 3 ];then
+if [ $FSPARTSIZE -lt 2 ];then
         echo "rootfs part size must larget than 2M"
         exit 1
 fi
@@ -92,7 +92,7 @@ if ! sudo mount -t ext4 /dev/mapper/$ROOTPART linuxdir; then
         exit 1
 fi
 mkdir -p $NPWD/tmp
-cp -r $NPWD/rootfs/root/*  $NPWD/tmp
+mv  $NPWD/rootfs/root/*  $NPWD/tmp
 sudo rsync -r -t -p -o -g -x --delete -l -H -D --numeric-ids -s --stats $NPWD/rootfs/ linuxdir > /dev/null 2>&1
 if [ $? -ne 0 ]; then
         echo "ERROR copying rootfs linux partition, maybe not enough size for rootfs"
