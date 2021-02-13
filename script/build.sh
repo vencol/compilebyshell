@@ -25,15 +25,22 @@ if [ $1_x == cp_x ];then
 	cp $ENVPATH $TFTPSERVERPATH
 	cp $IMGPATH $TFTPSERVERPATH
 	cp $DTBPATH $TFTPSERVERPATH
-elif [ $1_x == app_x -o $1_x == module_x ];then
-    cd $CODETOP/src/$1
-    if [[ "$2" == "" ]] || [[ ! -d $2 ]] || [[ ! -f $2/$1.sh ]]; then
+elif [ $1_x == app_x ];then
+    cd $CODETOP/src/app
+    if [[ $? != 0 ]] || [[ "$2" == "" ]]; then
         echo "not found $2 or $2/$1.sh for $2 in $CODETOP/src/$1 "
         exit 1
     fi
-    echo "build $2 $1 in $CODETOP/src/app/$2 "
-    cd $2
-    ./$1.sh
+    if [ -f $2.c ]; then
+        ./single$1.sh $2
+    else
+        if [[ ! -d $2 ]] || [[ ! -f $2/$1.sh ]]; then
+            echo "not found $2 or $2/$1.sh for $2 in $CODETOP/src/$1 "
+            exit 1
+        else
+            ./project$1.sh $2
+        fi
+    fi
 elif [ $1_x == scr_x ];then
     echo $PWD
     #mkenvimage -s 0x2000 -o uboot.env env.txt #8k
