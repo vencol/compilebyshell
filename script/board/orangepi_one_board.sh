@@ -1,4 +1,9 @@
 #! /bin/bash
+# orangepi one default use the fllow driver
+#   modules                         device                      devnode
+#   gpio_keys                       sw4(PL3)                    /dev/input/event0
+#   led-class,leds-gpio             red led(PA15)               /sys/class/leds/orangepi:red:status/brightness
+#   led-class,leds-gpio             green led(PL10)             /sys/class/leds/orangepi:green:status/brightness
 NPWD=/home/vencol/code/board/opione
 
 
