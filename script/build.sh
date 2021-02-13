@@ -25,6 +25,15 @@ if [ $1_x == cp_x ];then
 	cp $ENVPATH $TFTPSERVERPATH
 	cp $IMGPATH $TFTPSERVERPATH
 	cp $DTBPATH $TFTPSERVERPATH
+elif [ $1_x == app_x -o $1_x == module_x ];then
+    cd $CODETOP/src/$1
+    if [[ "$2" == "" ]] || [[ ! -d $2 ]] || [[ ! -f $2/$1.sh ]]; then
+        echo "not found $2 or $2/$1.sh for $2 in $CODETOP/src/$1 "
+        exit 1
+    fi
+    echo "build $2 $1 in $CODETOP/src/app/$2 "
+    cd $2
+    ./$1.sh
 elif [ $1_x == scr_x ];then
     echo $PWD
     #mkenvimage -s 0x2000 -o uboot.env env.txt #8k
@@ -145,7 +154,8 @@ else
     echo "(./build.sh rootfs) to build rootfs with busybox"
     echo "(./build.sh img x1 x2 ) to build sdimg fat: x1M rootfs: x2M"
     echo "(./build.sh cp) copy all tftp file to tftp server root"
-    echo "(./build.sh cpenv) copy env file to tftp server root"
     echo "(./build.sh env) set the board env to uEnv.txt"
     echo "(./build.sh clean xxx) clean xxx dir"
+    echo "(./build.sh app x1) build the x1 app"
+    echo "(./build.sh module x1) build the x1 module"
 fi

@@ -93,6 +93,7 @@ LOGNAME=$USER #登录之后使用用户名显示
 HOSTNAME="vencolfs"     #主机名
 PS1="[\u@\h \w]# "      #终端显示信息
 alias ll="ls -al"
+alias wdtreboot="echo 0 > /dev/watchdog0"   #because reboot have system halt problem
 
 if [ ! -z ${SSH_TTY} ]; then
    export PATH=/sbin:/usr/sbin:/bin:/usr/bin
