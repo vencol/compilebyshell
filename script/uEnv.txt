@@ -29,7 +29,7 @@ mmcbootenv=fatload ${devname} ${devnum}:${bootpart} $kernel_addr_r ${imagename};
 #tftp and nfs
 tftpenv=usb start; setenv ethact usb_ether; setenv ipaddr ${boardip}; setenv gatewayip ${boardgw}; setenv netmask ${boardmask}; setenv serverip ${pcip};
 nfsbootarg=setenv bootargs root=/dev/nfs rw rootpath=${nfspath} nfsroot=${pcip}:${nfspath},nolock ip=${boardip}:${pcip}:${boardgw}:${boardmask} console=ttyS0,115200 nfsvers=2
-tftpgetimage=tftp $kernel_addr_r ${imagename}; tftp $fdt_addr_r ${dtbname};
+tftpgetimage=tftp $kernel_addr_r ${imagename}; sleep 1; tftp $fdt_addr_r ${dtbname};
 
 #set uart update env ymoden
 byuartupspl=loady $kernel_addr_r; ${devname} write $kernel_addr_r ${splstart} ${splsize};

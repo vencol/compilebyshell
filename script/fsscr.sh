@@ -66,10 +66,6 @@ nameseverr 10.8.16.30
 DNSEOF
 
 
-#cp -a $NPWD/../gcc/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/lib/ lib
-#rm -f lib/*.a
-#去除符号表，节省空间，但是不能反汇编了
-#${COMPILE_DIR}arm-none-linux-gnueabi-strip rootfs/lib/*
 
 #下面的是用户相关的信息，自行修改
 cat << PWEOF > etc/passwd
@@ -100,11 +96,13 @@ if [ ! -z ${SSH_TTY} ]; then
 fi
 PROEOF
 
-GCCLIB=/home/vencol/code/gcc/sysroot-glibc-linaro-2.25-2019.12-rc1-arm-linux-gnueabihf/lib
-#cp $GCCLIB/ld-linux-armhf.so.3 $GCCLIB/libc.so.6 $GCCLIB/libm.so.6 $GCCLIB/libresolv.so.2 lib/
+# 使用动态busybox时，需要添加gcc的lib库
+GCCPATH=$CODETOP/gcc/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libm.so.6 $GCCPATH/arm-linux-gnueabihf/libc/lib/libm-2.25.so lib/
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libc.so.6 $GCCPATH/arm-linux-gnueabihf/libc/lib/ld-linux-armhf.so.3 lib/
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libresolv.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libresolv-2.25.so lib/
 
-# HAVELL=cat etc/bash.bashrc | grep "alias ll= 'ls -al' "
-# if [ "$HAVELL" == "" ]; then
-#    cat "alias ll= 'ls -al' " >> etc/bash.bashrc
-# fi
-
+# cp -ar $GCCPATH/arm-linux-gnueabihf/libc/lib/* lib  #all lib
+rm -rf lib/*.a
+#去除符号表，节省空间，但是不能反汇编了
+${GCCPATH}/bin/arm-linux-gnueabihf-strip lib/*

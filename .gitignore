@@ -3,4 +3,5 @@ linuxbuild/*
 bboxbuild/*
 atfbuild/*
 rootfs/*
+starootfs/*
 images/*
