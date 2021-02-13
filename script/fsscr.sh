@@ -84,9 +84,9 @@ GEOF
 #root:$6$B7gzTyFF$Zm2fC5EQYdqupH.BwccJv0YX4XingPOqsMcu1vlWC4AaKof4ycDGlXooMs2m5ZxfDPvjhDicnkt/PuGBDqZtD1:18316:0:99999:7:::
 #SHEOF
 
-# cat << HOSTEOF > etc/hostname
-# vencolfs
-# HOSTEOF
+cat << HOSTEOF > etc/hostname
+vencolfs
+HOSTEOF
 cat << PROEOF > etc/profile
 USER="`id -un`"
 LOGNAME=$USER #登录之后使用用户名显示
