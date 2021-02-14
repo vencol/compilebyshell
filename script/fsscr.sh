@@ -98,9 +98,13 @@ PROEOF
 
 # 使用动态busybox时，需要添加gcc的lib库
 GCCPATH=$CODETOP/gcc/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf
+# for base libc
 cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libm.so.6 $GCCPATH/arm-linux-gnueabihf/libc/lib/libm-2.25.so lib/
 cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libc.so.6 $GCCPATH/arm-linux-gnueabihf/libc/lib/ld-linux-armhf.so.3 lib/
+# for dns
 cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libresolv.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libresolv-2.25.so lib/
+# for pthread
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libpthread.so.0 $GCCPATH/arm-linux-gnueabihf/libc/lib/libpthread-2.25.so lib/
 
 # cp -ar $GCCPATH/arm-linux-gnueabihf/libc/lib/* lib  #all lib
 rm -rf lib/*.a
