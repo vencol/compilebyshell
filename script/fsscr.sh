@@ -4,7 +4,7 @@
 echo "making rootfs"
 mkdir -p rootfs
 cd rootfs
-mkdir -p dev etc mnt proc var tmp sys root lib
+mkdir -p dev etc mnt proc var tmp sys root lib home
 sudo mknod dev/null c 1 3
 sudo mknod dev/zero c 1 5
 sudo mknod dev/console c 5 1
@@ -70,10 +70,12 @@ DNSEOF
 #下面的是用户相关的信息，自行修改
 cat << PWEOF > etc/passwd
 root:FMKTwEUCSZm9Q:0:0:root:/root:/bin/sh
+nginx:Q8zFfMDzAgqVg:1001:1001:Linux User,,,:/home/nginx:/bin/sh
 PWEOF
 
 cat << GEOF > etc/group
 root:x:0:
+nginx:x:1001:
 GEOF
 
 #cat << SHEOF > etc/shadow
@@ -105,6 +107,18 @@ cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libc.so.6 $GCCPATH/arm-linux-gnueabihf/
 cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libresolv.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libresolv-2.25.so lib/
 # for pthread
 cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libpthread.so.0 $GCCPATH/arm-linux-gnueabihf/libc/lib/libpthread-2.25.so lib/
+# for nginx ssl
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libdl.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libdl-2.25.so lib/
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libcrypt.so.1 $GCCPATH/arm-linux-gnueabihf/libc/lib/libcrypt-2.25.so lib/
+# for user error getpwarn, according to use which server
+# if have error with nginx: [alert] shmget(1280) failed,kernel need to open System V IPC support
+# cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_compat.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_compat-2.25.so lib/
+# cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_db.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_db-2.25.so lib/
+# cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_dns.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_dns-2.25.so lib/
+cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_files.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_files-2.25.so lib/
+# cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_hesiod.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_hesiod-2.25.so lib/
+# cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_nis.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_nis-2.25.so lib/
+# cp $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_nisplus.so.2 $GCCPATH/arm-linux-gnueabihf/libc/lib/libnss_nisplus-2.25.so lib/
 
 # cp -ar $GCCPATH/arm-linux-gnueabihf/libc/lib/* lib  #all lib
 rm -rf lib/*.a

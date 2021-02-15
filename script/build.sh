@@ -32,13 +32,13 @@ elif [ $1_x == app_x ];then
         exit 1
     fi
     if [ -f $2.c ]; then
-        ./single$1.sh $2
+        ./single$1.sh $2 nfs
     else
         if [[ ! -d $2 ]] || [[ ! -f $2/$1.sh ]]; then
             echo "not found $2 or $2/$1.sh for $2 in $CODETOP/src/$1 "
             exit 1
         else
-            ./project$1.sh $2
+            ./project$1.sh $2 nfs
         fi
     fi
 elif [ $1_x == scr_x ];then
