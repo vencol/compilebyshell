@@ -1,0 +1,66 @@
+# 1.编译目录结构如下
+```
+code/
+├── board   #board目录下定义不同类型的板子
+│   ├── 2440self
+│   ├── beagleboneblack
+│   └── opione
+│       ├── bboxbuild                       #busybox源码编译输出的位置
+│       ├── bootbuild                       #uboot源码编译输出的位置
+│       ├── build.sh -> script/build.sh
+│       ├── images                          #生成sd卡镜像的位置
+│       ├── linuxbuild                      #kernel源码编译输出的位置
+│       ├── README.md
+│       ├── rootfs                          #软连接的实际位置，根文件系统
+│       └── script                          #当前项目的编译脚本位置
+│       └── script                          #当前项目的编译脚本位置
+|           ├── board                       #不同板子的配置参数位置
+|           ├── build.sh                    #主编译脚本，软连接到opione板子目录层
+|           ├── fsscr.sh                    #制作rootfs的脚本
+|           ├── imgscr.sh                   #制作sd卡的脚本
+|           ├── imgscr.sh-old
+|           └── uEnv.txt                    #uboot需要的uEnv文件
+├── gcc     #gcc目录下定义不同的工具链
+│   ├── gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi
+│   ├── gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf
+│   ├── gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz
+│   ├── gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi.tar.xz
+│   ├── sysroot-glibc-linaro-2.25-2019.12-rc1-arm-linux-gnueabihf
+│   ├── sysroot-glibc-linaro-2.25-2019.12-rc1-arm-linux-gnueabihf.tar.xz
+├── nfs -> board/opione/rootfs/     #调试时板子需要挂载的nfs根文件系统，可以软连接到不同板子的rootfs
+└── src             #所有编译源码的目录
+    ├── app         #编译应用和驱动模块的源码位置
+    ├── busybox     #busybox源码的位置
+    ├── linux       #kernel源码的位置
+    ├── other       #其他源码的位置
+    └── uboot       #uboot源码的位置
+
+```
+# 2.编译命令
+## 1.编译命令需要在板子目录下执行，比如orangepione，可以在opione目录下执行，如下所示
+```
+.
+├── bboxbuild
+├── bootbuild
+├── build.sh -> script/build.sh
+├── images
+├── linuxbuild
+├── README.md
+├── rootfs
+└── script
+```
+## 2.输入命令`./build.sh help`,输出如下帮助，可以根据自己需要执行相关编译
+```
+Usage for help
+(./build.sh atf xxx) to use arm-trusted-firmware make xxx
+(./build.sh uboot xxx) to use uboot make xxx
+(./build.sh linux xxx) to use linux make xxx
+(./build.sh busybox xxx) to use busybox make xxx
+(./build.sh rootfs) to build rootfs with busybox
+(./build.sh img x1 x2 ) to build sdimg fat: x1M rootfs: x2M
+(./build.sh cp) copy all tftp file to tftp server root
+(./build.sh env) set the board env to uEnv.txt
+(./build.sh clean xxx) clean xxx dir
+(./build.sh app x1) build the x1 app
+(./build.sh module x1) build the x1 module
+```
