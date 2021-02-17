@@ -1,3 +1,4 @@
+**本项目通过脚本实现，uboot，kernel，busybox，rootfs，sdimg基础linux系统的构建，通过脚本可以了解系统构建的整个过程**
 # 1.编译目录结构如下
 ```
 code/
@@ -36,7 +37,15 @@ code/
     └── uboot       #uboot源码的位置
 
 ```
-# 2.编译命令
+# 2.相关源码下载
+|名称|源码|说明|
+|:-:|:-:|:-:|
+|交叉编译gcc|`wget https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/arm-linux-gnueabihf/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf.tar.xz`|使用linaro的gcc，网址下载的是arm gcc |
+|uboot|`git clone https://gitee.com/mirrors/u-boot.git`|用主线uboot的gitee镜像|
+|kernel|`git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git`|使用稳定版主线内核的清华源镜像|
+|busybox|`git clone https://gitee.com/mirrors/busyboxsource.git`|使用主线busybox的gitee镜像|
+
+# 3.编译命令
 ## 1.编译命令需要在板子目录下执行，比如orangepione，可以在opione目录下执行，如下所示
 ```
 .
@@ -49,7 +58,7 @@ code/
 ├── rootfs
 └── script
 ```
-## 2.输入命令`./build.sh help`,输出如下帮助，可以根据自己需要执行相关编译
+## 4.输入命令`./build.sh help`,输出如下帮助，可以根据自己需要执行相关编译
 ```
 Usage for help
 (./build.sh atf xxx) to use arm-trusted-firmware make xxx
