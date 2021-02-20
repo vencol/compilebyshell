@@ -1,9 +1,10 @@
 #! /bin/bash
-NPWD=/home/vencol/code/board/opione
+
+MYBOARD=bbb
+NPWD=/home/vencol/code/board/boardbuild/$MYBOARD
 
 
 ARCH=arm
-MYBOARD=bbb
 CROSS_COMPILE=/home/vencol/code/gcc/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
 
 SPLOFFSET=128
@@ -13,7 +14,7 @@ BOOTOFFSET=384
 BOOTSIZE=500
 BOOTPATH=$NPWD/bootbuild/u-boot.img
 
-ENVPATH=$NPWD/script/uEnv.txt
+ENVPATH=$NPWD/uEnv.txt
 IMGPATH=$NPWD/linuxbuild/arch/arm/boot/zImage
 DTBPATH=$NPWD/linuxbuild/arch/arm/boot/dts/am335x-boneblack.dtb
 

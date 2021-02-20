@@ -1,9 +1,9 @@
 #! /bin/bash
-NPWD=/home/vencol/code/board/opione
+MYBOARD=opiwin
+NPWD=/home/vencol/code/board/boardbuild/$MYBOARD
 
 
 ARCH=aarch64
-MYBOARD=opiwin
 CROSS_COMPILE=/home/vencol/code/gcc/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 
 SPLOFFSET=8

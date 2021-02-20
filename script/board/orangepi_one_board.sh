@@ -4,11 +4,12 @@
 #   gpio_keys                       sw4(PL3)                    /dev/input/event0
 #   led-class,leds-gpio             red led(PA15)               /sys/class/leds/orangepi:red:status/brightness
 #   led-class,leds-gpio             green led(PL10)             /sys/class/leds/orangepi:green:status/brightness
-NPWD=/home/vencol/code/board/opione
+
+MYBOARD=opione
+NPWD=/home/vencol/code/board/boardbuild/$MYBOARD
 
 
 ARCH=arm
-MYBOARD=opione
 CROSS_COMPILE=/home/vencol/code/gcc/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
 
 SPLOFFSET=8

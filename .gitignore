@@ -1,7 +1,1 @@
-bootbuild/*
-linuxbuild/*
-bboxbuild/*
-atfbuild/*
-rootfs/*
-starootfs/*
-images/*
+boardbuild/*

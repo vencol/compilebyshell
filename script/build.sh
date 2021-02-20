@@ -1,15 +1,18 @@
 #! /bin/bash
-MYIPADDR=192.168.0.111
+# MYIPADDR=192.168.0.111
+MYIPADDR=10.8.80.111
 TFTPSERVERPATH=~/tftp
 NPWD=`realpath .`
-CODETOP=`realpath ../../`
+CODETOP=`realpath ../`
 SRCPATH=$NPWD/script
-BOARDSH_NAME=orangepi_one_board
+# BOARDSH_NAME=orangepi_one_board
+BOARDSH_NAME=black_beagle_board
 
 # git clone https://gitee.com/mirrors/u-boot.git
 # git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git
 # git clone https://gitee.com/mirrors/busyboxsource.git
 
+echo "now build the board for $BOARDSH_NAME"
 . $SRCPATH/board/$BOARDSH_NAME.sh
 if [ $? != 0 ]; then
     echo "set board param fail, pls set you board config"
@@ -119,6 +122,7 @@ elif [ $1_x == img_x ];then
     fi
 elif [ $1_x == env_x ];then
     echo $PWD
+    cp script/uEnv.txt $ENVPATH
     #block is sd is 512 ,so * 2
     SPLSTART=`echo "obase=16;$[$SPLOFFSET * 2]" | bc`
     SPLSIZE=`echo "obase=16;$[($BOOTOFFSET - $SPLOFFSET) * 2]" | bc`
