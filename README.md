@@ -3,24 +3,26 @@
 ```
 code/
 ├── board   #board目录下定义不同类型的板子
-│   ├── 2440self
-│   ├── beagleboneblack
-│   └── opione
-│       ├── bboxbuild                       #busybox源码编译输出的位置
-│       ├── bootbuild                       #uboot源码编译输出的位置
-│       ├── build.sh -> script/build.sh
-│       ├── images                          #生成sd卡镜像的位置
-│       ├── linuxbuild                      #kernel源码编译输出的位置
-│       ├── README.md
-│       ├── rootfs                          #软连接的实际位置，根文件系统
-│       └── script                          #当前项目的编译脚本位置
-│       └── script                          #当前项目的编译脚本位置
-|           ├── board                       #不同板子的配置参数位置
-|           ├── build.sh                    #主编译脚本，软连接到opione板子目录层
-|           ├── fsscr.sh                    #制作rootfs的脚本
-|           ├── imgscr.sh                   #制作sd卡的脚本
-|           ├── imgscr.sh-old
-|           └── uEnv.txt                    #uboot需要的uEnv文件
+│   ├── build.sh -> script/build.sh
+│   ├── README.md
+│   │── script
+│   │   ├── board               #当前项目的编译脚本位置
+│   │   ├── build.sh            #主编译脚本，软连接到opione板子目录层
+│   │   ├── fsscr.sh            #制作rootfs的脚本
+│   │   ├── imgscr.sh           #制作sd卡的脚本
+│   │   ├── imgscr.sh-old
+│   │   └── uEnv.txt            #uboot需要的uEnv文件
+│   └── boardbuild              #不同板子的编译输出目录
+│       ├── bbb
+│       ├── opiwin
+│       └── opione
+│           ├── bboxbuild       #busybox源码编译输出的位置
+│           ├── bootbuild       #uboot源码编译输出的位置
+│           ├── build.sh -> script/build.sh
+│           ├── images          #生成sd卡镜像的位置
+│           ├── linuxbuild      #kernel源码编译输出的位置
+│           ├── rootfs          #软连接的实际位置，根文件系统
+│           └── README.md       #介绍文件
 ├── gcc     #gcc目录下定义不同的工具链
 │   ├── gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabi
 │   ├── gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf

@@ -1,12 +1,13 @@
 #! /bin/bash
 # MYIPADDR=192.168.0.111
-MYIPADDR=10.8.80.111
+MYIPADDR=192.168.1.111
+# MYIPADDR=10.8.80.111
 TFTPSERVERPATH=~/tftp
 NPWD=`realpath .`
 CODETOP=`realpath ../`
 SRCPATH=$NPWD/script
-# BOARDSH_NAME=orangepi_one_board
-BOARDSH_NAME=black_beagle_board
+BOARDSH_NAME=orangepi_one_board
+# BOARDSH_NAME=black_beagle_board
 
 # git clone https://gitee.com/mirrors/u-boot.git
 # git clone https://mirrors.tuna.tsinghua.edu.cn/git/linux-stable.git

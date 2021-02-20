@@ -12,12 +12,11 @@ SPLPATH=$NPWD/bootbuild/spl/sunxi-spl.bin
 BOOTOFFSET=40
 BOOTSIZE=800
 BOOTPATH=$NPWD/bootbuild/u-boot.itb
-BOOTDEFCONFIG=configs/opione/uboot-config
 
-ENVPATH=$NPWD/script/uEnv.txt
+ENVPATH=$NPWD/uEnv.txt
 IMGPATH=$NPWD/linuxbuild/arch/arm64/boot/Image
 DTBPATH=$NPWD/linuxbuild/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dtb
-KERNELDEFCONFIG=configs/opione/linux-config
+
 
 # export ARCH CROSS_COMPILE MYBOARD
 # export SPLOFFSET SPLPATH

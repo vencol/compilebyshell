@@ -19,7 +19,7 @@ BOOTOFFSET=40
 BOOTSIZE=500
 BOOTPATH=$NPWD/bootbuild/u-boot-dtb.bin
 
-ENVPATH=$NPWD/script/uEnv.txt
+ENVPATH=$NPWD/uEnv.txt
 IMGPATH=$NPWD/linuxbuild/arch/arm/boot/zImage
 DTBPATH=$NPWD/linuxbuild/arch/arm/boot/dts/sun8i-h3-orangepi-one.dtb
 
